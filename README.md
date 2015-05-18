@@ -10,7 +10,7 @@
 $ sbt run -DapplyEvolutions.default=true
 ```
 
-## Try to create access tokens supporting grant types by using curl
+## Try to create access tokens using curl
 
 ### Client credentials
 

@@ -41,4 +41,10 @@ object OauthAuthorizationCode extends SkinnyCRUDMapper[OauthAuthorizationCode] {
         .gt(oac.createdAt, expireAt)
     ).apply().headOption
   }
+
+  def delete(code: String)(implicit session: DBSession): Unit = {
+    OauthAuthorizationCode.deleteBy(sqls
+      .eq(column.code, code)
+    )
+  }
 }

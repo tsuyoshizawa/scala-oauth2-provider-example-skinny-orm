@@ -116,6 +116,10 @@ object OAuthController extends Controller with OAuth2Provider {
       })
     }
 
+    override def deleteAuthCode(code: String): Future[Unit] = DB.localTx { implicit session =>
+      Future.successful(OauthAuthorizationCode.delete(code))
+    }
+
     // Protected resource
 
     override def findAccessToken(token: String): Future[Option[AccessToken]] = DB.readOnly { implicit session =>

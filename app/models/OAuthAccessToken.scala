@@ -63,8 +63,8 @@ object OauthAccessToken extends SkinnyCRUDMapper[OauthAccessToken] {
 
   def delete(account: Account, client: OauthClient)(implicit session: DBSession): Int = {
     OauthAccessToken.deleteBy(sqls
-      .eq(OauthAccessToken.column.accountId, account.id).and
-      .eq(OauthAccessToken.column.oauthClientId, client.id)
+      .eq(column.accountId, account.id).and
+      .eq(column.oauthClientId, client.id)
     )
   }
 
