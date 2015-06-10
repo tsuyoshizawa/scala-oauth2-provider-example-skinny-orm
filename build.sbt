@@ -10,8 +10,11 @@ lazy val root = (project in file("."))
 ).settings(
   libraryDependencies ++= Seq(
     jdbc,
+    evolutions,
     "org.skinny-framework" %% "skinny-orm" % "1.3.18",
-    "org.scalikejdbc" %% "scalikejdbc-play-dbplugin-adapter" % "2.3.6",
-    "com.nulab-inc" %% "play2-oauth2-provider" % "0.14.0"
+    "org.scalikejdbc" %% "scalikejdbc-play-dbapi-adapter" % "2.4.0",
+    "com.nulab-inc" %% "play2-oauth2-provider" % "0.15.0"
   )
 )
+
+routesGenerator := InjectedRoutesGenerator

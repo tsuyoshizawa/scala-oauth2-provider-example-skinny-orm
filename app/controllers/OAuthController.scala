@@ -9,7 +9,7 @@ import scala.concurrent.Future
 import scalaoauth2.provider._
 import scalaoauth2.provider.OAuth2ProviderActionBuilders._
 
-object OAuthController extends Controller with OAuth2Provider {
+class OAuthController extends Controller with OAuth2Provider {
 
   implicit val authInfoWrites = new Writes[AuthInfo[Account]] {
     def writes(authInfo: AuthInfo[Account]) = {

@@ -1,13 +1,13 @@
 # scala-oauth2-provider example with Skinny-ORM
 
-- [scala-oauth2-provider](https://github.com/nulab/scala-oauth2-provider) 0.13.x
-- [Playframework](https://www.playframework.com/) 2.3.x
+- [scala-oauth2-provider](https://github.com/nulab/scala-oauth2-provider) 0.15.x
+- [Playframework](https://www.playframework.com/) 2.4.x
 - [Skinny-ORM](http://skinny-framework.org/documentation/orm.html) 1.3.x
 
 ## Running Playframework with evolutions
 
 ```
-$ sbt run -DapplyEvolutions.default=true
+$ sbt -Dplay.evolutions.db.default.autoApply=true run
 ```
 
 ## Try to create access tokens using curl
