@@ -1,10 +1,10 @@
 # scala-oauth2-provider example with Skinny-ORM
 
 - [scala-oauth2-provider](https://github.com/nulab/scala-oauth2-provider) 0.15.x
-- [Playframework](https://www.playframework.com/) 2.4.x
+- [Play Framework](https://www.playframework.com/) 2.4.x
 - [Skinny-ORM](http://skinny-framework.org/documentation/orm.html) 1.3.x
 
-## Running Playframework with evolutions
+## Running Play Framework with evolutions
 
 ```
 $ sbt -Dplay.evolutions.db.default.autoApply=true run
