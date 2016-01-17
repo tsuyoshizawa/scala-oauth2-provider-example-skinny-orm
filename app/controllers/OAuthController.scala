@@ -23,6 +23,15 @@ class OAuthController extends Controller with OAuth2Provider {
     }
   }
 
+  override val tokenEndpoint = new TokenEndpoint {
+    override val handlers = Map(
+      OAuthGrantType.AUTHORIZATION_CODE -> new AuthorizationCode(),
+      OAuthGrantType.REFRESH_TOKEN -> new RefreshToken(),
+      OAuthGrantType.CLIENT_CREDENTIALS -> new ClientCredentials(),
+      OAuthGrantType.PASSWORD -> new Password()
+    )
+  }
+
   def accessToken = Action.async { implicit request =>
     issueAccessToken(new MyDataHandler())
   }
@@ -35,8 +44,11 @@ class OAuthController extends Controller with OAuth2Provider {
 
     // common
 
-    override def validateClient(clientCredential: ClientCredential, grantType: String): Future[Boolean] = DB.readOnly { implicit session =>
-      Future.successful(OauthClient.validate(clientCredential.clientId, clientCredential.clientSecret.getOrElse(""), grantType))
+    override def validateClient(request: AuthorizationRequest): Future[Boolean] = DB.readOnly { implicit session =>
+      Future.successful((for {
+        clientCredential <- request.clientCredential
+      } yield (OauthClient.validate(clientCredential.clientId, clientCredential.clientSecret.getOrElse(""), request.grantType)))
+      .exists(_ == true))
     }
 
     override def getStoredAccessToken(authInfo: AuthInfo[Account]): Future[Option[AccessToken]] = DB.readOnly { implicit session =>
@@ -61,16 +73,21 @@ class OAuthController extends Controller with OAuth2Provider {
       )
     }
 
-    // Password grant
-
-    override def findUser(username: String, password: String): Future[Option[Account]] = DB.readOnly { implicit session =>
-      Future.successful(Account.authenticate(username, password))
-    }
-
-    // Client credentials grant
-
-    override def findClientUser(clientCredential: ClientCredential, scope: Option[String]): Future[Option[Account]] = DB.readOnly { implicit session =>
-      Future.successful(OauthClient.findClientCredentials(clientCredential.clientId, clientCredential.clientSecret.getOrElse("")))
+    override def findUser(request: AuthorizationRequest): Future[Option[Account]] = DB.readOnly { implicit session =>
+      request match {
+        case request: PasswordRequest =>
+          Future.successful(Account.authenticate(request.username, request.password))
+        case request: ClientCredentialsRequest =>
+          val maybeAccount = request.clientCredential.flatMap { clientCredential =>
+            OauthClient.findClientCredentials(
+              clientCredential.clientId,
+              clientCredential.clientSecret.getOrElse("")
+            )
+          }
+          Future.successful(maybeAccount)
+        case _ =>
+          Future.successful(None)
+      }
     }
 
     // Refresh token grant
