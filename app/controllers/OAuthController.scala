@@ -47,8 +47,7 @@ class OAuthController extends Controller with OAuth2Provider {
     override def validateClient(request: AuthorizationRequest): Future[Boolean] = DB.readOnly { implicit session =>
       Future.successful((for {
         clientCredential <- request.clientCredential
-      } yield (OauthClient.validate(clientCredential.clientId, clientCredential.clientSecret.getOrElse(""), request.grantType)))
-      .exists(_ == true))
+      } yield OauthClient.validate(clientCredential.clientId, clientCredential.clientSecret.getOrElse(""), request.grantType)).contains(true))
     }
 
     override def getStoredAccessToken(authInfo: AuthInfo[Account]): Future[Option[AccessToken]] = DB.readOnly { implicit session =>
