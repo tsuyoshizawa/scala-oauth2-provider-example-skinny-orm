@@ -5,6 +5,7 @@
 # Home page
 GET     /                           controllers.Application.index
 
+POST    /account                    controllers.AccountController.create
 POST    /oauth/access_token         controllers.OAuthController.accessToken
 GET     /resources                  controllers.OAuthController.resources
 
