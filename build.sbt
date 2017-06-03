@@ -1,7 +1,7 @@
 lazy val root = (project in file("."))
 .enablePlugins(PlayScala)
 .settings(
-  scalaVersion := "2.11.7",
+  scalaVersion := "2.11.11",
   scalacOptions := Seq("-language:_", "-deprecation", "-unchecked", "-feature", "-Xlint"),
   transitiveClassifiers in Global := Seq(Artifact.SourceClassifier),
   sources in (Compile, doc) := Nil,
@@ -14,9 +14,9 @@ lazy val root = (project in file("."))
   libraryDependencies ++= Seq(
     jdbc,
     evolutions,
-    "org.skinny-framework" %% "skinny-orm" % "2.0.7",
-    "org.scalikejdbc" %% "scalikejdbc-play-dbapi-adapter" % "2.5.0",
-    "com.nulab-inc" %% "play2-oauth2-provider" % "0.17.0"
+    "org.skinny-framework" %% "skinny-orm" % "2.3.7",
+    "org.scalikejdbc" %% "scalikejdbc-play-dbapi-adapter" % "2.5.3",
+    "com.nulab-inc" %% "play2-oauth2-provider" % "1.2.0"
   )
 )
 

@@ -44,9 +44,9 @@ class OAuthController extends Controller with OAuth2Provider {
 
     // common
 
-    override def validateClient(request: AuthorizationRequest): Future[Boolean] = DB.readOnly { implicit session =>
+    override def validateClient(maybeCredential: Option[ClientCredential], request: AuthorizationRequest): Future[Boolean] = DB.readOnly { implicit session =>
       Future.successful((for {
-        clientCredential <- request.clientCredential
+        clientCredential <- maybeCredential
       } yield OauthClient.validate(clientCredential.clientId, clientCredential.clientSecret.getOrElse(""), request.grantType)).contains(true))
     }
 
@@ -72,18 +72,20 @@ class OAuthController extends Controller with OAuth2Provider {
       )
     }
 
-    override def findUser(request: AuthorizationRequest): Future[Option[Account]] = DB.readOnly { implicit session =>
+    override def findUser(maybeCredential: Option[ClientCredential], request: AuthorizationRequest): Future[Option[Account]] = DB.readOnly { implicit session =>
       request match {
         case request: PasswordRequest =>
           Future.successful(Account.authenticate(request.username, request.password))
         case request: ClientCredentialsRequest =>
-          val maybeAccount = request.clientCredential.flatMap { clientCredential =>
-            OauthClient.findClientCredentials(
-              clientCredential.clientId,
-              clientCredential.clientSecret.getOrElse("")
-            )
+          Future.successful {
+            for {
+              clientCredential <- maybeCredential
+              account <- OauthClient.findClientCredentials(
+                clientCredential.clientId,
+                clientCredential.clientSecret.getOrElse("")
+              )
+            } yield account
           }
-          Future.successful(maybeAccount)
         case _ =>
           Future.successful(None)
       }
